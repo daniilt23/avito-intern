@@ -6,15 +6,21 @@ import (
 )
 
 type Service struct {
-	IUserRepo repository.IUserRepo
-	ITeamRepo repository.ITeamRepo
-	Logger    *slog.Logger
+	IUserRepo    repository.IUserRepo
+	ITeamRepo    repository.ITeamRepo
+	IPullRequest repository.IPullRequestRepo
+	Logger       *slog.Logger
 }
 
-func NewService(ITeamRepo repository.ITeamRepo, IUserRepo repository.IUserRepo, Logger *slog.Logger) *Service {
+func NewService(ITeamRepo repository.ITeamRepo,
+	IUserRepo repository.IUserRepo,
+	IPullRequestRepo repository.IPullRequestRepo,
+	Logger *slog.Logger,
+) *Service {
 	return &Service{
-		ITeamRepo: ITeamRepo,
-		IUserRepo: IUserRepo,
-		Logger: Logger,
+		ITeamRepo:    ITeamRepo,
+		IUserRepo:    IUserRepo,
+		IPullRequest: IPullRequestRepo,
+		Logger:       Logger,
 	}
 }

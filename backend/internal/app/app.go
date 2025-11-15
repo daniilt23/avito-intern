@@ -4,6 +4,7 @@ import (
 	"avito/internal/config"
 	"avito/internal/handlers"
 	"avito/internal/repository/postgres"
+	pullrequest "avito/internal/repository/postgres/pull_request"
 	"avito/internal/repository/postgres/team"
 	"avito/internal/repository/postgres/user"
 	"avito/internal/service"
@@ -33,15 +34,18 @@ func (a *App) Start() {
 	logger.Info("Connect to db")
 
 	teamRepoSql := team.NewTeamRepoSQL(db)
+	logger.Info("Create user repo")
 
 	userRepoSQL := user.NewUserRepoSQL(db)
-	logger.Debug("Create user repo")
+	logger.Info("Create user repo")
 
-	service := service.NewService(teamRepoSql, userRepoSQL, logger)
-	logger.Debug("Create service")
+	pullRequestRepoSQL := pullrequest.NewPullRequestRepoSQL(db)
+
+	service := service.NewService(teamRepoSql, userRepoSQL, pullRequestRepoSQL, logger)
+	logger.Info("Create service")
 
 	handler := handlers.NewHandler(service)
-	logger.Debug("Create handler")
+	logger.Info("Create handler")
 
 	srv := NewServer(*cfg, handler.InitRoutes())
 	logger.Info("server data", "host", cfg.Server.Host, "port", cfg.Server.Port)

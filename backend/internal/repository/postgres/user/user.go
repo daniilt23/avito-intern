@@ -1,6 +1,8 @@
 package user
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type UserRepoSQL struct {
 	db *sql.DB
@@ -8,8 +10,4 @@ type UserRepoSQL struct {
 
 func NewUserRepoSQL(db *sql.DB) *UserRepoSQL {
 	return &UserRepoSQL{db: db}
-}
-
-func (r *UserRepoSQL) CreateUser(name string, isActive bool, teamId int) error {
-	return nil
 }

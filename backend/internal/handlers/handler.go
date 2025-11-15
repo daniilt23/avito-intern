@@ -24,10 +24,21 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		c.JSON(http.StatusOK, gin.H{"answer": "pong"})
 	})
 
-	teamRoute := router.Group("/team")
+	teamsRoute := router.Group("/team")
 	{
-		teamRoute.POST("/add", h.CreateTeam)
-		teamRoute.GET("/get", h.GetTeam)
+		teamsRoute.POST("/add", h.CreateTeam)
+		teamsRoute.GET("/get", h.GetTeam)
+	}
+	usersRoute := router.Group("/users")
+	{
+		usersRoute.PATCH("/setIsActive", h.SetIsActive)
+		usersRoute.GET("/getReview", h.GetReview)
+	}
+	prRoute := router.Group("/pullRequest")
+	{
+		prRoute.POST("/create", h.CreatePullRequest)
+		prRoute.PATCH("/merge", h.SetMergeStatus)
+		prRoute.POST("/reassign", h.ReassignReviewer)
 	}
 
 	return router

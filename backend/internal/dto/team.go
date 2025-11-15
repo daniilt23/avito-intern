@@ -1,12 +1,16 @@
 package dto
 
-type CreateTeamDto struct {
-	TeamName string          `json:"team_name" binding:"required"`
-	Members  []CreateUserDto `json:"members" binding:"required,dive"`
+type ErrorResponse struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
 }
 
-type CreateUserDto struct {
-	UserId   string `json:"user_id" binding:"required"`
-	Username string `json:"username" binding:"required"`
-	IsActive bool   `json:"is_active" binding:"required"`
+type TeamReq struct {
+	TeamName string          `json:"team_name" binding:"required"`
+	Members  []UserCreateReq `json:"members" binding:"required,dive"`
+}
+
+type TeamResp struct {
+	TeamName string         `json:"team_name"`
+	Members  []UserResponse `json:"members"`
 }
