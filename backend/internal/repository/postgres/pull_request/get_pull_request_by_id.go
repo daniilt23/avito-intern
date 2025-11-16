@@ -13,8 +13,9 @@ func (r *PullRequestRepoSQL) GetPullRequestById(id string) (*models.PullRequestM
 	var mergedAt sql.NullTime
 
 	var model models.PullRequestModel
-	if err := r.db.QueryRow(query, id).Scan(&model.PullRequestId, &model.PullRequestName,
-		&model.AuthorId, &model.Status, &mergedAt); err != nil {
+	err := r.db.QueryRow(query, id).Scan(&model.PullRequestId, &model.PullRequestName,
+		&model.AuthorId, &model.Status, &mergedAt)
+	if err != nil {
 		return nil, err
 	}
 

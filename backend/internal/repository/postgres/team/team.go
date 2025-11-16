@@ -1,11 +1,18 @@
 package team
 
-import "database/sql"
+import (
+	"database/sql"
+	"log/slog"
+)
 
 type TeamRepoSQL struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewTeamRepoSQL(db *sql.DB) *TeamRepoSQL {
-	return &TeamRepoSQL{db: db}
+func NewTeamRepoSQL(db *sql.DB, logger *slog.Logger) *TeamRepoSQL {
+	return &TeamRepoSQL{
+		db: db,
+		logger: logger,	
+	}
 }

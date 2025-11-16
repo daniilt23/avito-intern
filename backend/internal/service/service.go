@@ -12,15 +12,15 @@ type Service struct {
 	Logger       *slog.Logger
 }
 
-func NewService(ITeamRepo repository.ITeamRepo,
-	IUserRepo repository.IUserRepo,
-	IPullRequestRepo repository.IPullRequestRepo,
-	Logger *slog.Logger,
+func NewService(iTeamRepo repository.ITeamRepo,
+	iUserRepo repository.IUserRepo,
+	iPullRequestRepo repository.IPullRequestRepo,
+	logger *slog.Logger,
 ) *Service {
 	return &Service{
-		ITeamRepo:    ITeamRepo,
-		IUserRepo:    IUserRepo,
-		IPullRequest: IPullRequestRepo,
-		Logger:       Logger,
+		ITeamRepo:    iTeamRepo,
+		IUserRepo:    iUserRepo,
+		IPullRequest: iPullRequestRepo,
+		Logger:       logger,
 	}
 }

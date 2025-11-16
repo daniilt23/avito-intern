@@ -7,7 +7,13 @@ func (r *TeamRepoSQL) CreateTeam(reqTeam *models.TeamModel, reqUsers []models.Us
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+	defer func() {
+		err := tx.Rollback()
+		if err != nil {
+			r.logger.Error("failed to rollback",
+				"error", err)
+		}
+	}()
 
 	query := `
 	INSERT INTO teams (team_name) 
@@ -31,7 +37,8 @@ func (r *TeamRepoSQL) CreateTeam(reqTeam *models.TeamModel, reqUsers []models.Us
 		}
 	}
 
-	if err = tx.Commit(); err != nil {
+	err = tx.Commit()
+	if err != nil {
 		return err
 	}
 

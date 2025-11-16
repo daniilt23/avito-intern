@@ -6,7 +6,8 @@ func (r *TeamRepoSQL) GetTeamByName(name string) (string, error) {
 	WHERE team_name = $1`
 
 	var team_name string
-	if err := r.db.QueryRow(query, name).Scan(&team_name); err != nil {
+	err := r.db.QueryRow(query, name).Scan(&team_name)
+	if err != nil {
 		return "", err
 	}
 

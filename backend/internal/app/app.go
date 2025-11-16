@@ -33,13 +33,13 @@ func (a *App) Start() {
 	}
 	logger.Info("Connect to db")
 
-	teamRepoSql := team.NewTeamRepoSQL(db)
+	teamRepoSql := team.NewTeamRepoSQL(db, logger)
 	logger.Info("Create user repo")
 
-	userRepoSQL := user.NewUserRepoSQL(db)
+	userRepoSQL := user.NewUserRepoSQL(db, logger)
 	logger.Info("Create user repo")
 
-	pullRequestRepoSQL := pullrequest.NewPullRequestRepoSQL(db)
+	pullRequestRepoSQL := pullrequest.NewPullRequestRepoSQL(db, logger)
 
 	service := service.NewService(teamRepoSql, userRepoSQL, pullRequestRepoSQL, logger)
 	logger.Info("Create service")
@@ -50,7 +50,8 @@ func (a *App) Start() {
 	srv := NewServer(*cfg, handler.InitRoutes())
 	logger.Info("server data", "host", cfg.Server.Host, "port", cfg.Server.Port)
 
-	if err = srv.Run(); err != nil {
+	err = srv.Run()
+	if err != nil {
 		logger.Error("Cannot start server")
 		os.Exit(1)
 	}

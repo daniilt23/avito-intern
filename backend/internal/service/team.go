@@ -55,7 +55,8 @@ func (s *Service) CreateTeam(req *dto.TeamReq) error {
 func (s *Service) GetTeamByName(name string) ([]dto.UserResponse, error) {
 	s.Logger.Info("Starting function: GetTeamByName",
 		"name", name)
-	if _, err := s.ITeamRepo.GetTeamByName(name); err != nil {
+	_, err := s.ITeamRepo.GetTeamByName(name)
+	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			s.Logger.Warn("Team not found",
 				"team_name", name)

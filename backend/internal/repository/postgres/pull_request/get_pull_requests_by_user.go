@@ -13,7 +13,13 @@ func (r *PullRequestRepoSQL) GetPullRequestsByUser(userId string) ([]models.Pull
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			r.logger.Error("Failed to close rows",
+				"error", err)
+		}
+	}()
 
 	var pullRequests []models.PullRequestModel
 

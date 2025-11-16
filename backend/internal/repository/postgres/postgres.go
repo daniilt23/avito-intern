@@ -20,12 +20,14 @@ func ConnectDB(config config.Storage) (*sql.DB, error) {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
+	err = db.Ping()
+	if err != nil {
 		log.Fatal("Cannot connect to database", err)
 		return nil, err
 	}
 
-	if err = goose.Up(db, "/app/migrations"); err != nil {
+	err = goose.Up(db, "/app/migrations")
+	if err != nil {
 		return nil, err
 	}
 

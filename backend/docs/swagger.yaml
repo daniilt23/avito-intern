@@ -1,0 +1,460 @@
+basePath: /
+definitions:
+  dto.CreatePullRequestReq:
+    description: Create PR request
+    properties:
+      author_id:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+    required:
+    - author_id
+    - pull_request_id
+    - pull_request_name
+    type: object
+  dto.CreatePullRequestResp:
+    description: PR response
+    properties:
+      assigned_reviewers:
+        items:
+          type: string
+        type: array
+      author_id:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    description: Error response
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  dto.GetReviewResponse:
+    description: Get review response
+    properties:
+      pull_requests:
+        items:
+          $ref: '#/definitions/dto.PullRequestRespShort'
+        type: array
+      user_id:
+        type: string
+    type: object
+  dto.PullRequestResp:
+    description: PR response
+    properties:
+      assigned_reviewers:
+        items:
+          type: string
+        type: array
+      author_id:
+        type: string
+      merged_at:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.PullRequestRespShort:
+    description: PR response short
+    properties:
+      author_id:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.ReassignReviewerReq:
+    description: Reassigne reviewer request
+    properties:
+      pull_request_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - pull_request_id
+    - user_id
+    type: object
+  dto.ReassignReviewerResp:
+    description: Reassigne reviewer response
+    properties:
+      assigned_reviewers:
+        items:
+          type: string
+        type: array
+      author_id:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      replaced_by:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.SetMergeStatusReq:
+    description: Set merge status request
+    properties:
+      pull_request_id:
+        type: string
+    required:
+    - pull_request_id
+    type: object
+  dto.TeamReq:
+    description: Team request
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/dto.UserCreateReq'
+        type: array
+      team_name:
+        type: string
+    required:
+    - members
+    - team_name
+    type: object
+  dto.TeamResp:
+    description: Team response
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/dto.UserResponse'
+        type: array
+      team_name:
+        type: string
+    type: object
+  dto.UserCreateReq:
+    description: Create user request
+    properties:
+      is_active:
+        type: boolean
+      user_id:
+        type: string
+      username:
+        type: string
+    required:
+    - is_active
+    - user_id
+    - username
+    type: object
+  dto.UserResponse:
+    description: User response
+    properties:
+      is_active:
+        type: boolean
+      team_name:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.UserSetActiveReq:
+    description: User set active request
+    properties:
+      is_active:
+        type: boolean
+      user_id:
+        type: string
+    required:
+    - is_active
+    - user_id
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a server to assigne 2 random person from team to PR
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /pullRequest/create:
+    post:
+      consumes:
+      - application/json
+      description: For use this method you need to be admin
+      parameters:
+      - description: request body with all required fields
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePullRequestReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/dto.CreatePullRequestResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create PR
+      tags:
+      - Pull request
+  /pullRequest/merge:
+    patch:
+      consumes:
+      - application/json
+      description: For use this method you need to be admin
+      parameters:
+      - description: request body with all required fields
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SetMergeStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PullRequestResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Set PR status to MERGED
+      tags:
+      - Pull request
+  /pullRequest/reassign:
+    post:
+      consumes:
+      - application/json
+      description: For use this method you need to be admin
+      parameters:
+      - description: request body with all required fields
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReassignReviewerReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ReassignReviewerResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reassigne reviewer
+      tags:
+      - Pull request
+  /team/add:
+    post:
+      consumes:
+      - application/json
+      description: create team method dont need verify
+      parameters:
+      - description: request body for create team
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TeamReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/dto.TeamResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create team
+      tags:
+      - Team
+  /team/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get team by name
+        For use this method you need to be user/admin
+      parameters:
+      - description: query param for get team
+        in: query
+        name: team_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TeamResp'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get team
+      tags:
+      - Team
+  /users/getReview:
+    get:
+      consumes:
+      - application/json
+      description: For use this method you need to be user/admin
+      parameters:
+      - description: query param user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GetReviewResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all pull request by user
+      tags:
+      - User
+  /users/setIsActive:
+    patch:
+      consumes:
+      - application/json
+      description: Change is_active flag
+      parameters:
+      - description: json body to change active
+        in: body
+        name: required
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserSetActiveReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change activity to user
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      {token}"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

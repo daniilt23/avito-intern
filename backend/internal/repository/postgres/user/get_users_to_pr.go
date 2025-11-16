@@ -13,19 +13,27 @@ func (r *UserRepoSQL) GetUsersToPr(teamName string, authorId string) ([]string, 
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			r.logger.Error("Failed to close rows",
+				"error", err)
+		}
+	}()
 
 	var usersId []string
 
 	for rows.Next() {
 		var user models.UserModel
-		if err := rows.Scan(&user.UserId); err != nil {
+		err := rows.Scan(&user.UserId)
+		if err != nil {
 			return nil, err
 		}
 		usersId = append(usersId, user.UserId)
 	}
 
-	if err = rows.Err(); err != nil {
+	err = rows.Err()
+	if err != nil {
 		return nil, err
 	}
 

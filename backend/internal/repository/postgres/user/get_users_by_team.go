@@ -11,19 +11,27 @@ func (r *UserRepoSQL) GetUsersByTeam(name string) (*[]models.UserModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			r.logger.Error("Failed to close rows",
+				"error", err)
+		}
+	}()
 
 	var users []models.UserModel
 
 	for rows.Next() {
 		var user models.UserModel
-		if err := rows.Scan(&user.UserId, &user.Username, &user.IsActive); err != nil {
+		err := rows.Scan(&user.UserId, &user.Username, &user.IsActive)
+		if err != nil {
 			return nil, err
 		}
 		users = append(users, user)
 	}
 
-	if err = rows.Err(); err != nil {
+	err = rows.Err()
+	if err != nil {
 		return &users, err
 	}
 

@@ -31,13 +31,15 @@ func MustLoadConfig() *Config {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 
-	if err := viper.ReadInConfig(); err != nil {
+	err := viper.ReadInConfig()
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	cfg := &Config{}
 
-	if err := viper.Unmarshal(cfg); err != nil {
+	err = viper.Unmarshal(cfg)
+	if err != nil {
 		log.Fatal(err)
 	}
 

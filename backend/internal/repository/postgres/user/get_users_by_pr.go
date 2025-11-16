@@ -11,19 +11,27 @@ func (r *UserRepoSQL) GetUsersByPr(prName string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			r.logger.Error("Failed to close rows",
+				"error", err)
+		}
+	}()
 
 	var userId []string
 
 	for rows.Next() {
 		var user models.UserModel
-		if err := rows.Scan(&user.UserId); err != nil {
+		err := rows.Scan(&user.UserId)
+		if err != nil {
 			return nil, err
 		}
 		userId = append(userId, user.UserId)
 	}
 
-	if err = rows.Err(); err != nil {
+	err = rows.Err()
+	if err != nil {
 		return nil, err
 	}
 

@@ -2,44 +2,42 @@ package handlers
 
 import (
 	"avito/internal/service"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
 	srv *service.Service
 }
 
-func NewHandler(Service *service.Service) *Handler {
+func NewHandler(service *service.Service) *Handler {
 	return &Handler{
-		srv: Service,
+		srv: service,
 	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.GET("ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"answer": "pong"})
-	})
-
 	teamsRoute := router.Group("/team")
 	{
 		teamsRoute.POST("/add", h.CreateTeam)
-		teamsRoute.GET("/get", h.GetTeam)
+		teamsRoute.GET("/get", h.AuthMiddleware(false), h.GetTeam)
 	}
 	usersRoute := router.Group("/users")
 	{
-		usersRoute.PATCH("/setIsActive", h.SetIsActive)
-		usersRoute.GET("/getReview", h.GetReview)
+		usersRoute.PATCH("/setIsActive", h.AuthMiddleware(true), h.SetIsActive)
+		usersRoute.GET("/getReview", h.AuthMiddleware(false), h.GetReview)
 	}
 	prRoute := router.Group("/pullRequest")
 	{
-		prRoute.POST("/create", h.CreatePullRequest)
-		prRoute.PATCH("/merge", h.SetMergeStatus)
-		prRoute.POST("/reassign", h.ReassignReviewer)
+		prRoute.POST("/create", h.AuthMiddleware(true), h.CreatePullRequest)
+		prRoute.PATCH("/merge", h.AuthMiddleware(true), h.SetMergeStatus)
+		prRoute.POST("/reassign", h.AuthMiddleware(true), h.ReassignReviewer)
 	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router
 }
