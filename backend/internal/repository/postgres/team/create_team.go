@@ -1,6 +1,9 @@
 package team
 
-import "avito/internal/models"
+import (
+	"avito/internal/models"
+	"database/sql"
+)
 
 func (r *TeamRepoSQL) CreateTeam(reqTeam *models.TeamModel, reqUsers []models.UserModel) error {
 	tx, err := r.db.Begin()
@@ -9,7 +12,7 @@ func (r *TeamRepoSQL) CreateTeam(reqTeam *models.TeamModel, reqUsers []models.Us
 	}
 	defer func() {
 		err := tx.Rollback()
-		if err != nil {
+		if err != nil && err != sql.ErrTxDone {
 			r.logger.Error("failed to rollback",
 				"error", err)
 		}
